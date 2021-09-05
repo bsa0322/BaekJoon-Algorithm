@@ -1,48 +1,62 @@
 #include <iostream>
-#include <vector>
+#include <stack>
 
 using namespace std;
 
 /**
- * 
+ * 1. 한 자릿수씩 더해서 스택(혹은 배열)에 저장
+ * 2. 한 자릿수씩 더할 때, 값이 10을 넘어가는 경우 고려
+ * 3. A와 B의 길이가 같지만, 둘의 합의 길이는 다른 경우 고려
+ * 4. A와 B의 길이가 다른 경우 고려
+ *
+ * 본 풀이에서 더한 결과값을 스택에 넣는 이유는 일의자릿수부터 더하기 때문
+ * 배열을 사용할 경우 마지막 인덱스부터 출력하면 됨
  */
 
-vector<int> calcPlus(vector<int> &a, vector<int> &b, int n) {
-    vector<int> plus, result; //plus: 다음 자리수로 넘어가서 더해지는 수
-    plus.assign(n + 1, 0);
-    for (int i = 0; i < n; i++) {
-        int num = plus[i] + a[i] + b[i]; //각 자리수의 값 + 전 자리수에서 넘어온 수 더함
-        plus[i + 1] = num / 10; //다음 자리수로 넘어가서 더해지는 수
-        result.push_back(num % 10); //현재 자리수 최종 값
-    }
-    if (plus[n]) result.push_back(plus[n]);
-    return result;
+//한 자릿수씩 더해서 값 리턴하는 함수
+int digitPlus(string &a, string &b, int p1, int p2, bool carry) {
+    int num = 0;
+    if (p1 >= 0) //p1 인덱스가 0 이상이라면 -> a에 남은 수가 존재한다면
+        num += (a[p1] - '0');
+    if (p2 >= 0) //p2 인덱스가 0 이상이라면 -> b에 남은 수가 존재한다면
+        num += (b[p2] - '0');
+    if (carry) //전 자릿수에서 올림되었다면
+        return num + 1;
+    return num;
 }
 
-//string 으로 받은 입력 수를 벡터에 일의 자리 수부터 저장
-vector<int> stringToVec(string str, int n) {
-    vector<int> arr(n, 0);
-    for (int x = 0, i = str.length() - 1; i >= 0; x++, i--)
-        arr[x] = str[i] - '0';
-    return arr;
+//A + B 함수, 일의 자릿수부터 더함
+stack<int> calcPlus(string &a, string &b) {
+    stack<int> st;
+    int p1 = a.length() - 1; //a의 일의 자릿수 인덱스
+    int p2 = b.length() - 1; //b의 일의 자릿수 인덱스
+    int num = 0;
+
+    while (p1 >= 0 || p2 >= 0) { //자릿수 더하기
+        num = digitPlus(a, b, p1--, p2--, num / 10); //그 전 자릿수 더하기 값이 10을 넘었다면 올림변수인 carry를 true로 호출
+        st.push(num % 10); //올림값 제외한 한 자릿수만 스택에 저장
+    }
+    if (num >= 10) //마지막 올림 확인
+        st.push(1);
+
+    return st;
 }
 
 int main() {
-    string str_a, str_b; //길이가 매우 기므로 string 으로 입력
-    vector<int> a, b, result; //각 A, B의 각 자리수에 대한 값 저장, 더한 결과 저장하는 result 배열
+    string a, b; //입력 수가 매우 크므로 string 으로 입력
+    stack<int> st; //더한 결과값 저장할 스택
 
     //입력
-    cin >> str_a >> str_b;
-    int n = max(str_a.length(), str_b.length());
-    a = stringToVec(str_a, n);
-    b = stringToVec(str_b, n);
+    cin >> a >> b;
 
     //연산
-    result = calcPlus(a, b, n);
+    st = calcPlus(a, b);
 
     //출력
-    for (int i = result.size() - 1; i >= 0; i--)
-        cout << result[i];
+    while (!st.empty()) {
+        cout << st.top();
+        st.pop();
+    }
     cout << '\n';
 
     return 0;
