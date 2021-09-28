@@ -1,40 +1,60 @@
-//¹è¼ö¾Æ c++ 12865 
-#include<iostream>
-#include<algorithm>
-#include<cmath>
-#include<vector>
+#include <iostream>
+#include <vector>
+
 using namespace std;
-typedef pair<int,int> ci;
-vector <ci> bak; //°¢°¢ÀÇ ¹«°Ô¿Í °¡Ä¡°¡ µé¾î°¥ º¤ÅÍ 
-int table[100010]; //¹«°Ô°¡ ÀÎµ¦½º°í ±× ¹«°ÔÀÏ ¶§ ÃÖ´ë °¡Ä¡°¡ µé¾î°¥ ´ÙÀÌ³ª¹Í ¹è¿­ 
-int main()
-{
-	ci t;
-	int n,k,w,v,ans=0;
-	cin>>n>>k;
-	for(int i=0;i<n;i++)
-	{
-		cin>>w>>v;
-		bak.push_back(ci(w,v));
-	}
-	sort(bak.begin(),bak.end()); //¹«°Ô ÀÛÀº °ÍºÎÅÍ Á¤·Ä 
-	for(int i=0;i<=k;i++) table[i] = -1; //±× ¹«°Ô¸¸Å­ ¸¸µéÁö ¸øÇÏ´Â °æ¿ìµµ ÀÖÀ¸¹Ç·Î ÀÏ´Ü -1·Î ÃÊ±âÈ­ 
-	table[0] = 0; //¹«°Ô°¡ 0ÀÎ °æ¿ì´Â °¡Ä¡µµ 0À¸·Î ÃÊ±âÈ­ 
-	for(int i=0;i<n;i++)
-	{
-		t = bak[i]; //i¹øÂ° ¹°Ç° 
-		for(int j=k-1;j>=0;j--) //°Å²Ù·Î °Ë»çÇÏ´Â ÀÌÀ¯´Â Áßº¹µÇ´Â °æ¿ì¸¦  Á¦°ÅÇÏ±â À§ÇØ 
-		{
-			//±× ¹«°Ô¸¦ ¸¸µå´Â °ÍÀÌ ÀÏ´Ü °¡´ÉÇÏ°í, ÃÖ´ë¹«°Ô kº¸´Ù ÀÛ°Å³ª °°À»°æ¿ì ½ÇÇà 
-			if(table[j] >= 0 && j+t.first <= k) 
-			{
-				table[j+t.first] = max(table[j+t.first], table[j]+t.second); 
-				//ÇöÀç j+t.first¹«°Ô¿¡¼­ÀÇ °¡Ä¡¿Í j¹«°ÔÀÇ °¡Ä¡¿¡ i¹øÂ° ¹°Ç°ÀÇ °¡Ä¡¸¦ ´õÇÑ °Í Áß max°ªÀ» ÀúÀå 
-				ans = max(ans, table[j+t.first]);
-				//ans °ª ÇöÀç¿Í table[j+t.first] Áß Å«°Å ÀúÀå 
-			}
-		}
-	}
-	cout<<ans<<'\n';
-	return 0;
+
+struct info {
+    int w, v;
+};
+
+vector<info> product;
+
+//2ì°¨ì› ëƒ…ìƒ‰
+int knapsack_2(int n, int k) {
+    vector<vector<int>> dp(n + 1, vector<int>(k + 1, 0));
+
+    for (int i = 1; i <= n; i++) { //ê° ë¬¼í’ˆì— ëŒ€í•´, i: ë¬¼í’ˆ ë²ˆí˜¸, j: ìµœëŒ€ ë°°ë‚­ ë¬´ê²Œ
+        for (int j = 1; j < product[i].w; j++) //ìš°ì„  í•´ë‹¹ ë¬¼í’ˆì„ ë°°ë‚­ì— ë„£ì„ ìˆ˜ ì—†ëŠ” ê²½ìš°
+            dp[i][j] = dp[i - 1][j]; //ê·¸ ì „ ë¬¼í’ˆì— ëŒ€í•œ í˜„ì¬ ë¬´ê²Œì˜ ìµœëŒ“ê°’ ì €ì¥
+        for (int j = product[i].w; j <= k; j++) //í•´ë‹¹ ë¬¼í’ˆì„ ë°°ë‚­ì— ë„£ëŠ”ê²Œ ê°€ëŠ¥í•œ ê²½ìš°
+            dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - product[i].w] + product[i].v); //ë°°ë‚­ì— ë„£ëŠ” ê²½ìš°ì™€ ì•ˆ ë„£ëŠ” ê²½ìš° ì¤‘ ìµœëŒ“ê°’ ì €ì¥
+    }
+
+    return dp[n][k];
+}
+
+//1ì°¨ì› ëƒ…ìƒ‰
+int knapsack_1(int n, int k) {
+    vector<int> dp(k + 1, 0);
+
+    for (int i = 1; i <= n; i++) { //i: ë¬¼í’ˆ ë²ˆí˜¸
+        for (int j = k; j >= product[i].w; j--) { //j: ìµœëŒ€ ë°°ë‚­ ë¬´ê²Œ, 1ì°¨ì›ì´ë‹ˆ ë¬´ê²Œ kë¶€í„° ì‹œì‘(ê±°ê¾¸ë¡œ)
+            dp[j] = max(dp[j], dp[j - product[i].w] + product[i].v); //ë°°ë‚­ì— ë„£ëŠ” ê²½ìš°ì™€ ì•ˆ ë„£ëŠ” ê²½ìš° ì¤‘ ìµœëŒ“ê°’ ì €ì¥
+        }
+    }
+
+    return dp[k];
+}
+
+/**
+ * (íŠœí„°ìš©)
+ * ì´ ë¬¸ì œ ì²˜ìŒì—” 2ì°¨ì› ë°°ì—´(knapsack_2)ë¡œ êµ¬í˜„í–ˆë‹¤ 1ì°¨ì›(knapsack_1)ìœ¼ë¡œ ë°”ê¾¸ëŠ” ê±° ë³´ì—¬ì¤„ ì˜ˆì •ì…ë‹ˆë‹¤!
+ *
+ * ë­”ê°€ ë²¡í„°ë¡œ í•˜ë‹ˆê¹Œ ì„ ì–¸ë„ ê¸¸ì–´ì§€ê³  ë” í—·ê°ˆë¦¬ëŠ” ê²ƒ ê°™ê¸°ë„ í•˜ë„¤ì—¬....ë²¡í„°ë‘..ë°°ì—´..ë­ê°€ ì¢‹ì„ê¹Œìš” ,,,!
+ */
+
+int main() {
+    int n, k;
+
+    //ì…ë ¥
+    cin >> n >> k;
+    product.assign(n + 1, {});
+    for (int i = 1; i <= n; i++) { //ê° ë¬¼í’ˆì˜ ë¬´ê²Œì™€ ê°€ì¹˜ ì…ë ¥
+        cin >> product[i].w >> product[i].v;
+    }
+
+    //ì—°ì‚° + ì¶œë ¥
+    cout << knapsack_1(n, k) << '\n';
+
+    return 0;
 }
