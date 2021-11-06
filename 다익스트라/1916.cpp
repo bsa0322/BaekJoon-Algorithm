@@ -1,51 +1,57 @@
-#include<iostream>
-#include<algorithm>
-#include<queue>
-#include<vector>
+//최소 비용 구하기
+#include <iostream>
+#include <vector>
+#include <queue>
+
 using namespace std;
-typedef pair<int,int> ci;
-struct cmp{
-	bool operator()(ci x, ci y)
-	{
-		if(x.second < y.second) return 0;
-		return 1;
-	}
-};
-vector <vector<ci> > v(1001);
-priority_queue <ci, vector<ci>, cmp> pq;
-int ans[1001];
-int main()
-{
-	ci t;
-	int n,m,a,b,c,s,e,x,y;
-	cin>>n>>m;
-	for(int i=0;i<m;i++)
-	{
-		cin>>a>>b>>c;
-		v[a].push_back(ci(b,c));
-	}
-	cin>>s>>e;
-	for(int i=1;i<=n;i++)
-	{
-		ans[i]=-1;
-	}
-	ans[s]=0;
-	pq.push(ci(s,0));
-	while(!pq.empty())
-	{
-		t=pq.top();
-		pq.pop();
-		x=t.first;
-		y=t.second;
-		for(int i=0;i<v[x].size();i++)
-		{
-			if(ans[v[x][i].first]==-1 || ans[v[x][i].first] > y+v[x][i].second)
-			{
-				ans[v[x][i].first] = y+v[x][i].second;
-				pq.push(ci(v[x][i].first,y+v[x][i].second));
-			}
-		}
-	}
-	cout<<ans[e]<<'\n';
-	return 0;
+typedef pair<int, int> ci;
+const int INF = 1e8; //최대 n-1개의 간선을 지나게 됨
+
+//다익스트라
+vector<int> dijkstra(int n, int s, vector<vector<ci>> &graph) {
+    vector<int> dist(n + 1, INF);
+    priority_queue<ci, vector<ci>, greater<>> pq;
+
+    //시작 위치 초기화
+    dist[s] = 0;
+    pq.push(ci(0, s));
+
+    while (!pq.empty()) {
+        int weight = pq.top().first;
+        int node = pq.top().second;
+        pq.pop();
+
+        if (weight > dist[node]) //이미 더 짧은 경로가 있다면
+            continue;
+
+        for (int i = 0; i < graph[node].size(); i++) {
+            int next_node = graph[node][i].first; //연결된 정점
+            int next_weight = weight + graph[node][i].second; //시작점으로부터 연결된 정점까지의 거리
+            if (dist[next_node] > next_weight) { //더 짧은 경로로 갈 수 있다면
+                dist[next_node] = next_weight;
+                pq.push({next_weight, next_node});
+            }
+        }
+    }
+    return dist;
+}
+
+int main() {
+    int n, m, a, b, c, s, e;
+
+    //입력
+    cin >> n >> m;
+    vector<vector<ci>> graph(n + 1, vector<ci>(0)); //인접 리스트
+    while (m--) {
+        cin >> a >> b >> c;
+        graph[a].push_back(ci(b, c)); //방향 그래프
+    }
+    cin >> s >> e;
+
+    //연산
+    vector<int> ans = dijkstra(n, s, graph);
+
+    //출력
+    cout << ans[e] << '\n';
+    return 0;
 }
