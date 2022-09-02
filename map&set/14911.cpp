@@ -3,8 +3,6 @@
 //
 
 #include <iostream>
-#include <vector>
-#include <algorithm>
 #include <map>
 
 using namespace std;
@@ -15,16 +13,13 @@ using namespace std;
 
 int main() {
     int num, sum;
-    vector<int> arr;
     map<int, int> mp;
 
     while (cin >> num) {
-        arr.push_back(num);
+        sum = num;
+        mp[num]++;
     }
-    for (int i = 0; i < arr.size() - 1; i++) {
-        mp[arr[i]]++;
-    }
-    sum = arr[arr.size() - 1];
+    mp[sum]--;
 
     int cnt = 0;
     for (auto x: mp) {
