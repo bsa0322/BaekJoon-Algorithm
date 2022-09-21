@@ -7,25 +7,25 @@
 // 존재하는 알파벳 내에서 0 ~ 9 까지 배치 모든 경우 해보고,,,마지막에 더하기!
 // 범위는 18.. 백트래킹 가능!
 
+/**
+ * stoll 로 string to long long 하면 시간초과남.......시간이 꽤 걸리나봄
+ * 반복문으로 10씩 곱하며 해결해야함..
+ *
+ */
+
+
 #include <iostream>
 #include <vector>
 
 using namespace std;
 
 vector<int> alpha(26, -2);
-vector<int> alphaList;
-vector<bool> alphaCheck(26, false);
 vector<bool> check(10, false);
 string word1, word2, word3;
-bool ans = false;
 
 void checkString(string &s) {
     for (int i = 0; i < s.length(); i++) {
-        int temp = s[i] - 'A';
-        if (!alphaCheck[temp]) {
-            alphaCheck[temp] = true;
-            alphaList.push_back(temp);
-        }
+        alpha[s[i] - 'A'] = -1;
     }
 }
 
@@ -37,46 +37,40 @@ long long stringToInt(string &s) {
     return num;
 }
 
-void f(int cnt) {
-    if (cnt == alphaList.size()) {
+bool f(int cnt) {
+    bool ans = false;
+    if (cnt == 26) {
         if (stringToInt(word1) + stringToInt(word2) == stringToInt(word3)) {
-            ans = true;
+            return true;
         }
-        return;
+        return false;
+    }
+    if (alpha[cnt] == -2) {
+        return f(cnt + 1);
     }
     for (int i = 0; i < 10; i++) {
         if (!check[i]) {
             check[i] = true;
-            alpha[alphaList[cnt]] = i;
-            f(cnt + 1);
+            alpha[cnt] = i;
+            ans = f(cnt + 1);
             if (ans) {
-                return;
+                return true;
             }
             check[i] = false;
-            alpha[alphaList[cnt]] = -1;
+            alpha[cnt] = -1;
         }
     }
+    return ans;
 }
 
-/**
- * stoll 로 string to long long 하면 시간초과남.......시간이 꽤 걸리나봄
- * 반복문으로 10씩 곱하며 해결해야함..
- *
- */
-
 int main() {
-    ios_base :: sync_with_stdio(false);
-    cin.tie(NULL);
-    cout.tie(NULL);
-
     cin >> word1 >> word2 >> word3;
 
     checkString(word1);
     checkString(word2);
     checkString(word3);
 
-    f(0);
+    cout << (f(0) ? "YES" : "NO");
 
-    cout << (ans ? "YES" : "NO");
     return 0;
 }
