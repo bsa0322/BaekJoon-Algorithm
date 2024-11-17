@@ -2,6 +2,12 @@
 # Created by https://www.toptal.com/developers/gitignore/api/windows,macos,c++,clion+all
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,macos,c++,clion+all
 
+### personal ###
+algorithm/
+etc-contests/
+input.txt
+output.txt
+
 ### C++ ###
 # Prerequisites
 *.d
