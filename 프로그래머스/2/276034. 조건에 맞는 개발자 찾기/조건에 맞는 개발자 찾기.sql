@@ -1,0 +1,10 @@
+-- 코드를 작성해주세요
+SELECT ID, EMAIL, FIRST_NAME, LAST_NAME
+FROM DEVELOPERS as d
+WHERE (
+    SELECT COUNT(*)
+    FROM SKILLCODES as s
+    WHERE d.SKILL_CODE & s.CODE = s.CODE and s.NAME in ("Python", "C#")
+) > 0
+ORDER BY ID
+;
