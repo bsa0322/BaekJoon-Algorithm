@@ -39,11 +39,14 @@ string getAfterExplosion(string &input, string &explode) {
     return result;
 }
 
+/**
+ * 폭발 문자열 검사할 때, 바로 팝하고, 폭발 문자열 아니면 다시 넣어주고 바로 러턴하는 게 핵심 !!!
+ */
 int main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
-    
+
     string input, explode;
 
     cin >> input >> explode;
