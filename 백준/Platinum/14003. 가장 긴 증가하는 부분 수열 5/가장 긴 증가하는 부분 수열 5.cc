@@ -7,7 +7,7 @@ typedef pair<int, int> pi;
 const int INF = 1e6;
 
 /**
- * lis의 길이와 마지막 원소값을 받아서 수열 리스트 찾는 함수
+ * lis의 각 인덱스 별로 가능한 원소와 인덱스 저장한 2차원 배열을 통해 가능한 lis 수열 구해서 리턴하는 함수
  */
 vector<int> getLisList(int &lis_len, vector<vector<pi>> &path) {
     vector<int> lis(lis_len, 0);
@@ -57,7 +57,7 @@ int main() {
         cin >> num[i];
     }
 
-    vector<vector<pi>> path = lisWithBS(n, num); // first: lis_len, second: 수열 마지막 원소 index
+    vector<vector<pi>> path = lisWithBS(n, num);
     int lis_len = path.size();
     vector<int> lis = getLisList(lis_len, path);
 
