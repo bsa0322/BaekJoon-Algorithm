@@ -2,6 +2,9 @@
 
 [문제 링크](https://www.acmicpc.net/problem/1306) 
 
+### 풀이
+[세그먼트 트리 설명 보러가기](https://bbicoduck.tistory.com/113)
+
 ### 성능 요약
 
 메모리: 14140 KB, 시간: 392 ms
