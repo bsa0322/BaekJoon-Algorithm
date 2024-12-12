@@ -9,26 +9,32 @@ const int INF = 500;
  */
 int getCnt(int &n, vector<int> &num) {
     int ans = INF;
-    for (int i = 1; i < n; i++) {
-        int diff = num[i] - num[i - 1];
-        int cnt = 0;
-        // 왼쪽 방향 변경
-        int last_num = num[i - 1];
-        for (int j = i - 2; j >= 0; j--) {
-            if (last_num - num[j] != diff) {
-                cnt++;
-            }
-            last_num -= diff;
-        }
-        // 오른쪽 방향 변경
-        last_num = num[i];
+    for (int i = 0; i < n - 1; i++) {
         for (int j = i + 1; j < n; j++) {
-            if (num[j] - last_num != diff) {
-                cnt++;
+            int diff_value = num[j] - num[i];
+            int diff_idx = j - i;
+            if (diff_value % diff_idx != 0) {
+                // 사이에 일정한 수로 나눌 수 없으면 넘어가기
+                continue;
             }
-            last_num += diff;
+            int diff = diff_value / diff_idx; // 두 수의 차이 값
+            int cnt = 0; // 바꾸는 횟수
+            int temp_num = num[i];
+            for (int k = i; k >= 0; k--) {
+                if (temp_num != num[k]) {
+                    cnt++;
+                }
+                temp_num -= diff;
+            }
+            temp_num = num[i];
+            for (int k = i; k < n; k++) {
+                if (temp_num != num[k]) {
+                    cnt++;
+                }
+                temp_num += diff;
+            }
+            ans = min(ans, cnt);
         }
-        ans = min(ans, cnt);
     }
     return ans;
 }
